@@ -1,13 +1,19 @@
-# ConTP: Transporter Function Prediction via Contrastive Learning
+# ConTP: Realigns protein representations to decouple transporter substrate specificity from evolutionary proximity
 
 ## Introduction
 
 This repository contains the official implementation of the ConTP inference workflow, designed for high-resolution
-functional annotation of membrane transporters.
-ConTP leverages contrastive learning to disentangle functional determinants from overall sequence similarity, enabling:
+functional annotation of membrane transporters. ConTP is an evolution-informed and function-aligned contrastive framework 
+that reorganizes pretrained protein language model embeddings around biochemical substrate semantics rather than sequence similarity. 
+This realignment enables taxon-agnostic, prototype-based inference across diverse evolutionary regimes. 
+ConTP resolves annotation failures under both remote and near-homology conditions, 
+reveals cross-family functional convergence (e.g., sodium transport across distinct TC superfamilies), 
+and faithfully recapitulates authentic multi-substrate specificity in NRAMP transporters.
 
-- Fine-grained substrate specificity prediction, and
-- TC (Transporter Classification) family assignment
+Currently, ConTP support:
+
+- Fine-grained substrate specificity prediction  (multi-label classification)
+- TC (Transporter Classification) family classification (single-label classification)
 
 The provided pipeline allows users to reproduce the results reported in the manuscript and apply ConTP to annotate novel
 transporter sequences.
