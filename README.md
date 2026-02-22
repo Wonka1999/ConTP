@@ -1,4 +1,4 @@
-# ConTP: Realigns protein representations to decouple transporter substrate specificity from evolutionary proximity
+# ConTP: Realigning protein representations to decouple transporter substrate specificity from evolutionary proximity
 
 ## Introduction
 
