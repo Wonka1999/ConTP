@@ -10,7 +10,7 @@ from Bio import SeqIO
 
 
 def file2data(path, **kwargs):
-    # 统一化文件读取。从硬盘读取文件，根据文件路径后缀判断读取文件的类型，返回文件中的数据
+    # Unified file reader: dispatch by the file extension and return the parsed content
     suffix = path.split(".")[-1]
     if suffix == "fasta":
         data = read_fasta(path, **kwargs)
@@ -30,26 +30,26 @@ def file2data(path, **kwargs):
     elif suffix == "json":
         data = read_json(path, **kwargs)
     else:
-        data = read_file(path)  # 读取文本文件
+        data = read_file(path)  # plain text fallback
     return data
 
 
 def read_file(path):
-    # 读取文本文件，返回文件中的文本内容
+    # Read a plain text file and return its contents
     with open(path, "r") as f:
         text = f.read()
     return text
 
 
 def read_fasta(path, **kwargs):
-    # 调取biopython包读取fasta文件，返回fasta中每一条记录的序列以及对应的描述
+    # Use biopython to parse a fasta file; return the sequence and description for each record
     seqs = [str(fa.seq) for fa in SeqIO.parse(path, "fasta")]
     description = [fa.description for fa in SeqIO.parse(path, "fasta")]
     return seqs, description
 
 
 def read_yaml(path, encoding="utf-8"):
-    # 读取yaml并转为dict，主要用于从yaml文件读取默认的项目配置以及模型超参数
+    # Read a yaml file as a dict (used to load default project configs and model hyper-parameters)
     try:
         with open(path, encoding=encoding) as file:
             yaml_dict = yaml.load(file.read(), Loader=yaml.FullLoader)
@@ -61,14 +61,14 @@ def read_yaml(path, encoding="utf-8"):
 
 
 def read_json(path, **kwargs):
-    # 读取json文件，返回对应的数据字典
+    # Read a json file and return the parsed dict
     with open(path, "r") as load_f:
         data = json.load(load_f, **kwargs)
     return data
 
 
 def read_seq_label_pair_file(path, index_col=None, data_col=None, label_col=None):
-    # 专门处理类似seq-label pair风格的数据，从xlsx, csv, tsv等类表格格式文件中读取数据并转换为 data, labels 列表
+    # Read seq-label pair data from xlsx/csv/tsv style tables; return (data, labels) lists
     with open(path, "r") as file:
         for line in file:
             if line[-1] == "\n":
@@ -82,7 +82,7 @@ def read_seq_label_pair_file(path, index_col=None, data_col=None, label_col=None
             if col in columns:
                 index_col = col
                 break
-    if index_col is None:  # 如果没有找到预定义的index_col，则抛出异常
+    if index_col is None:  # raise if no predefined index_col candidate matches
         raise RuntimeError(
             'Please specify param "index_col" since no default keywords match'
         )
@@ -93,7 +93,7 @@ def read_seq_label_pair_file(path, index_col=None, data_col=None, label_col=None
             if col in columns:
                 data_col = col
                 break
-    if data_col is None:  # 如果没有找到预定义的data_col，则抛出异常
+    if data_col is None:  # raise if no predefined data_col candidate matches
         raise RuntimeError(
             'Please specify param "data_col" since no default keywords match'
         )
@@ -104,7 +104,7 @@ def read_seq_label_pair_file(path, index_col=None, data_col=None, label_col=None
             if col in columns:
                 label_col = col
                 break
-    if label_col is None:  # 如果没有找到预定义的label_col，则抛出异常
+    if label_col is None:  # raise if no predefined label_col candidate matches
         raise RuntimeError(
             'Please specify param "label_col" since no default keywords match'
         )

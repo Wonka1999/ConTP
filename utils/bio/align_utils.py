@@ -13,7 +13,7 @@ PAM250 = substitution_matrices.load("PAM250")
 
 def identity(seq1, seq2, align=False):
     if align:
-        # 使用全局比对计算序列相似度
+        # Compute sequence similarity via global alignment
         return align_pair(seq1, seq2).identity
     else:
         assert len(seq1) == len(seq2), 'The length of the two sequences must be equal.'

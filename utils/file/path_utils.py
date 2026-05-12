@@ -4,13 +4,13 @@ import shutil
 
 
 def is_path_exist(path):
-    # 检查路径是否存在
+    # Check whether the path exists
     return os.path.exists(path)
 
 
 def check_path(path, mkdir=True, log=True):
-    # 检查路径所在文件夹是否存在, 如果路径不存在则自动新建
-    dir = path if os.path.isdir(path) else os.path.abspath(os.path.dirname(path))  # 如果path是文件夹则直接使用path，否则使用path的父目录
+    # Ensure the directory containing `path` exists; create it when missing
+    dir = path if os.path.isdir(path) else os.path.abspath(os.path.dirname(path))  # use path itself if a directory, else its parent
     is_exist = is_path_exist(dir)
     if mkdir and not is_path_exist(dir):
         try:
@@ -23,32 +23,32 @@ def check_path(path, mkdir=True, log=True):
 
 
 def makedir(path):
-    os.makedirs(path, exist_ok=True)  # 递归创建文件夹，如果文件夹已经存在则不会报错
+    os.makedirs(path, exist_ok=True)  # Recursively create the directory; no error if it already exists
 
 
 def walk_path(base):
-    # 遍历base文件夹（目录），返回所有的路径组合（root, dir, file）
+    # Walk the `base` directory and return every (root, dirs, files) tuple
     return [[root, dirs, files] for root, dirs, files in os.walk(base)]
 
 
 def list_dir(base, absolute=False):
-    # 遍历base文件夹（目录），返回当前文件夹下的所有子文件夹
-    if absolute:  # 返回绝对路径
+    # List immediate sub-directories of `base`
+    if absolute:  # return absolute paths
         return [os.path.join(base, d) for d in os.listdir(base) if os.path.isdir(os.path.join(base, d))]
     else:
         return [d for d in os.listdir(base) if os.path.isdir(os.path.join(base, d))]
 
 
 def list_file(base, absolute=False):
-    # 遍历base文件夹（目录），返回当前文件夹下的所有子文件
-    if absolute:  # 返回绝对路径
+    # List immediate files inside `base`
+    if absolute:  # return absolute paths
         return [os.path.join(base, f) for f in os.listdir(base) if os.path.isfile(os.path.join(base, f))]
     else:
         return [f for f in os.listdir(base) if os.path.isfile(os.path.join(base, f))]
 
 
 def filter_dir(path, pattern, absolute=False, recursive=False):
-    # 递归遍历指定文件夹下的所有文件夹，匹配符合指定模式的文件夹
+    # Recursively glob directories under `path` matching `pattern`
     dirs = glob.glob(pattern, root_dir=path, recursive=recursive)
     dirs = [dir for dir in dirs if os.path.isdir(os.path.join(path, dir))]
     dirs = [os.path.join(path, dir) for dir in dirs] if absolute else dirs
@@ -56,14 +56,14 @@ def filter_dir(path, pattern, absolute=False, recursive=False):
 
 
 def filter_file(path, pattern, absolute=False, recursive=False):
-    # 递归遍历指定文件夹下的所有文件，匹配符合指定模式的文件
+    # Recursively glob files under `path` matching `pattern`
     files = glob.glob(pattern, root_dir=path, recursive=recursive)
     files = [os.path.abspath(os.path.join(path, file)) for file in files] if absolute else files
     return files
 
 
 def remove_dir(dirs, force=True):
-    # 删除指定的文件夹(列表)
+    # Remove the given directory or directories
     if isinstance(dirs, str):
         dirs = [dirs]
     for dir in dirs:
@@ -77,7 +77,7 @@ def remove_dir(dirs, force=True):
 
 
 def remove_file(files):
-    # 删除指定的文件(列表)
+    # Remove the given file or files
     if isinstance(files, str):
         files = [files]
     for file in files:
@@ -88,7 +88,7 @@ def remove_file(files):
 
 
 def rename_file(file, new_name):
-    # 批量重命名文件
+    # Batch rename files
     if isinstance(file, str):
         file = [file]
     if isinstance(new_name, str):
@@ -102,7 +102,7 @@ def rename_file(file, new_name):
 
 
 def copy_file(src_path, target_path):
-    # 复制文件到指定路径
+    # Copy a file to the target path
     if is_path_exist(src_path):
         check_path(target_path)
         shutil.copy(src_path, target_path)
@@ -112,5 +112,5 @@ def copy_file(src_path, target_path):
 
 
 def get_basename(path, suffix=False):
-    # 获取文件名
+    # Get the file basename (with or without extension)
     return os.path.basename(path) if suffix else os.path.splitext(os.path.basename(path))[0]

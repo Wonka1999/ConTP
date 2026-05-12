@@ -190,7 +190,7 @@ class ProteinDataset(Data.Dataset):
         else:
             pass
 
-        # 分层划分训练集和测试集
+        # Stratified split of train and test sets
         if test_size > 0:
             no_nan_indices = self.metadata[~self.metadata[stratify_col].isnull()].index
             stratify_values = self.metadata.loc[no_nan_indices, stratify_col]
@@ -207,7 +207,7 @@ class ProteinDataset(Data.Dataset):
             train_indices = self.metadata[~self.metadata[stratify_col].isnull()].index
             self.metadata['split'] = 'train'
 
-        # 如果有验证集大小定义，则进一步划分训练集和验证集
+        # If a validation-set size is provided, further split the training set
         if valid_size is not None:
             train_indices, valid_indices = train_test_split(
                 train_indices,

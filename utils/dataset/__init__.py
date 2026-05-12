@@ -26,7 +26,7 @@ def split_dataset(dataframe, test_size=0.2, valid_size=None, stratify=None, mode
     else:
         pass
 
-    # 分层划分训练集和测试集
+    # Stratified split of train and test sets
     train_indices, test_indices = [], []
     if test_size > 0:
         no_nan_indices = dataframe[~dataframe[stratify_col].isnull()].index
@@ -44,7 +44,7 @@ def split_dataset(dataframe, test_size=0.2, valid_size=None, stratify=None, mode
         train_indices = dataframe[~dataframe[stratify_col].isnull()].index
         dataframe['split'] = 'train'
 
-    # 如果有验证集大小定义，则进一步划分训练集和验证集
+    # If a validation-set size is provided, further split the training set
     valid_indices = []
     if valid_size is not None:
         train_indices, valid_indices = train_test_split(

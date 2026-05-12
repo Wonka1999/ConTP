@@ -1,0 +1,45 @@
+# ConTP — pinned dependencies for the `contp` conda environment.
+#
+# Python target: 3.10 (tested with 3.10.19)
+# CUDA target: 12.4
+#
+# PyTorch wheels must be fetched from the official cu124 index. Install with:
+#   pip install --index-url https://download.pytorch.org/whl/cu124 \
+#       torch==2.6.0+cu124 torchvision==0.21.0+cu124 torchaudio==2.6.0+cu124
+#   pip install -r requirements.txt
+#
+# Alternatively, point pip at the cu124 wheel index when resolving the whole
+# file by adding `--extra-index-url https://download.pytorch.org/whl/cu124`.
+
+# ---- Deep learning core ----
+torch==2.6.0+cu124
+torchvision==0.21.0+cu124
+torchaudio==2.6.0+cu124
+lightning==2.5.6
+pytorch-lightning==2.5.6
+torchmetrics==1.8.2
+lightning-utilities==0.15.2
+
+# ---- Scientific stack ----
+numpy==2.2.5
+pandas==2.3.3
+scipy==1.15.3
+scikit-learn==1.7.2
+h5py==3.15.1
+
+# ---- Protein / bio-informatics ----
+biopython==1.86
+fair-esm==2.0.0
+aaindex==1.1.2
+
+# ---- Config & utilities ----
+omegaconf==2.3.0
+PyYAML==6.0.3
+tqdm==4.67.1
+
+# ---- Logging & experiment tracking ----
+tensorboard==2.20.0
+
+# ---- Notebook tooling (required by the bundled .ipynb scripts) ----
+jupyterlab==4.4.7
+ipywidgets==8.1.7

@@ -10,23 +10,23 @@ from utils.dataset.Tokenizer import ProteinTokenizer
 
 def sample_positive(idx, idx2label, label2idx, seed=42, allow_self=True, verbose=False):
     """
-    从同标签样本中采一个正样本。
-    - 若该标签下只有 anchor 自己：
-        * 若 allow_self=True，则返回自己；
-        * 否则返回 None。
+    Sample one positive example from samples sharing the anchor's label.
+    - If the label has only the anchor itself:
+        * If allow_self=True, return the anchor itself;
+        * Otherwise return None.
     """
     random.seed(seed)
 
-    # --- 支持多标签情况 ---
+    # --- Handle multi-label case ---
     if isinstance(idx2label[idx], list):
         anchor_label = random.choice(idx2label[idx])
     else:
         anchor_label = idx2label[idx]
 
-    # --- 获取同类样本 ---
+    # --- Collect same-class samples ---
     exclude_samples = list(set(label2idx.get(anchor_label, [])) - {idx})
 
-    # --- 容错机制 ---
+    # --- Fallback when no peers exist ---
     if not exclude_samples:
         if verbose:
             print(f"[Warning] Label '{anchor_label}' has only one sample (idx={idx})")
@@ -35,7 +35,7 @@ def sample_positive(idx, idx2label, label2idx, seed=42, allow_self=True, verbose
         else:
             return None
 
-    # --- 正常采样 ---
+    # --- Normal sampling ---
     return random.choice(exclude_samples)
 
 

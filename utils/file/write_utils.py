@@ -10,7 +10,7 @@ from Bio.SeqRecord import SeqRecord
 
 
 def data2file(data, path, **kwargs):
-    # 将数据保存至硬盘，根据输出路径后缀判断输出文件类型。写入成功则返回True，否则会报错
+    # Save data to disk; dispatch by the output file extension. Returns True on success, raises otherwise.
     suffix = path.split(".")[-1]
     if suffix == "fasta":
         write_fasta(path, data, **kwargs)
@@ -38,18 +38,18 @@ def data2file(data, path, **kwargs):
 
 
 def write_file(text, file, **kwargs):
-    # 将文本写入文件
+    # Write text content to a file
     with open(file, "w") as f:
         f.write(text)
 
 
 def write_fasta(path, seqs, custom_index=None, description=None):
     """
-    调取biopython包输出fasta文件
-    :param path: 输出的目标路径
-    :param seqs: 序列列表
-    :param custom_index: 自定义索引，如果为None则使用默认index，从0至len(seqs)-1
-    :param description: 序列描述 或者 标签列表
+    Write a fasta file via biopython.
+    :param path: output file path
+    :param seqs: list of sequences
+    :param custom_index: custom record indices; defaults to 0..len(seqs)-1 when None
+    :param description: per-sequence description or label list
     """
     custom_index = [str(i) for i in range(len(seqs))] if custom_index is None else custom_index
     records = []
@@ -66,7 +66,7 @@ def write_fasta(path, seqs, custom_index=None, description=None):
 
 
 def write_yaml(path, data, **kwargs):
-    # 将数据写入yaml文件
+    # Serialize data to a yaml file
     assert ".yaml" in path, "output file must be a yaml file"
     with open(path, "w") as f:
         yaml.dump(data, f, **kwargs)
@@ -74,11 +74,12 @@ def write_yaml(path, data, **kwargs):
 
 def write_data_label_pair_file(path, seqs, labels, custom_index=None):
     """
-    将seq_list, label_list输出至xlsx, csv, tsv等类表格格式文件，写入成功则返回True，否则会报错
-    :param path: 输出的目标路径
-    :param seqs: 序列列表
-    :param labels: 标签列表
-    :param custom_index: 自定义索引，如果为None则使用默认index，从0至len(seqs)-1
+    Write (seq_list, label_list) to an xlsx/csv/tsv table file.
+    Returns True on success, raises otherwise.
+    :param path: output file path
+    :param seqs: list of sequences
+    :param labels: list of labels
+    :param custom_index: custom record indices; defaults to 0..len(seqs)-1 when None
     :return: True
     """
     custom_index = [i for i in range(len(seqs))] if custom_index is None else custom_index

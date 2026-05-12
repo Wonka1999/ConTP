@@ -8,5 +8,5 @@ def clean_memory():
 
 
 def seed_everything(seed=42, workers=True):
-    # 固定所有的随机种子，确保实验可复现
+    # Fix all random seeds to make experiments reproducible
     L.seed_everything(seed=seed, workers=workers)

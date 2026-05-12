@@ -20,13 +20,13 @@ class ProteinTokenizer:
     '''
 
     def __init__(self, **kwargs):
-        alphabet = kwargs.get('alphabet', 'ESM-1b')  # 默认使用ESM-1b的字母表
+        alphabet = kwargs.get('alphabet', 'ESM-1b')  # use the ESM-1b alphabet by default
         if alphabet != 'ESM-1b':
             raise NotImplementedError
 
-        truncation_seq_length = kwargs.get('truncation_seq_length', None)  # 超过该长度的序列会被截断
-        no_gap = kwargs.get('no_gap', True)  # 是否去除gap字符
-        pca = kwargs.get('PCA', None)  # 是否对aaindex进行PCA降维
+        truncation_seq_length = kwargs.get('truncation_seq_length', None)  # sequences longer than this are truncated
+        no_gap = kwargs.get('no_gap', True)  # whether to drop the gap character
+        pca = kwargs.get('PCA', None)  # whether to reduce the aaindex matrix via PCA
 
         self.alphabet, self.tokenizer = self.init_tokenizer(alphabet, truncation_seq_length)
         self.alphabet_size = len(self.alphabet)
@@ -75,7 +75,7 @@ class ProteinTokenizer:
         one_hot_encodings = torch.nn.functional.one_hot(batch_tokens[:, 1:-1],
                                                         num_classes=self.alphabet_size).long()  # (N, max_seq_len, 33)
 
-        # 如果只选4-23列会使得只有20个标准氨基酸的onehot编码是正常的，而其他的特殊符号对应的onehot编码为全0
+        # Selecting only columns 4-23 keeps the 20 standard amino acid one-hot encodings; all special tokens become zero
         select_cols = self.standard_cols.copy()
         if special_token:
             select_cols += self.special_token_cols
@@ -86,8 +86,8 @@ class ProteinTokenizer:
         select_cols = torch.tensor(select_cols, dtype=torch.long, device=one_hot_encodings.device)
         one_hot_encodings = one_hot_encodings[:, :, select_cols]  # (N, max_seq_len, x>=20)
 
-        if not padding:  # 如果不需要padding，则将onehot编码的长度截断到与序列长度一致
-            truncated_encodings = []  # 变长list，每个元素是一个(N, seq_len, 20)的onehot编码
+        if not padding:  # if padding is disabled, truncate the one-hot encoding to each sequence's actual length
+            truncated_encodings = []  # variable-length list; each element is an (N, seq_len, 20) one-hot tensor
             for sequence, one_hot_encoding in zip(sequences, one_hot_encodings):
                 one_hot_encoding = one_hot_encoding[:len(sequence)]
                 truncated_encodings.append(one_hot_encoding)

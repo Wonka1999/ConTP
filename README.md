@@ -1,19 +1,13 @@
-# ConTP: Reshaping transporter functional space to resolve substrate specificity beyond evolutionary proximity
+# ConTP: Transporter Function Prediction via Contrastive Learning
 
 ## Introduction
 
 This repository contains the official implementation of the ConTP inference workflow, designed for high-resolution
-functional annotation of membrane transporters. ConTP is an evolution-informed and function-aligned contrastive framework 
-that reorganizes pretrained protein language model embeddings around biochemical substrate semantics rather than sequence similarity. 
-This realignment enables taxon-agnostic, prototype-based inference across diverse evolutionary regimes. 
-ConTP resolves annotation failures under both remote and near-homology conditions, 
-reveals cross-family functional convergence (e.g., sodium transport across distinct TC superfamilies), 
-and faithfully recapitulates authentic multi-substrate specificity in NRAMP transporters.
+functional annotation of membrane transporters.
+ConTP leverages contrastive learning to disentangle functional determinants from overall sequence similarity, enabling:
 
-Currently, ConTP support:
-
-- Fine-grained substrate specificity prediction  (multi-label classification)
-- TC (Transporter Classification) family classification (single-label classification)
+- Fine-grained substrate specificity prediction, and
+- TC (Transporter Classification) family assignment
 
 The provided pipeline allows users to reproduce the results reported in the manuscript and apply ConTP to annotate novel
 transporter sequences.
@@ -51,15 +45,45 @@ Any questions or suggestions are welcome. You can:
 
 ### Create conda environment
 
-Install the required packages using conda and pip.
+We provide fully pinned dependency specifications so the environment is
+fully reproducible. Both `requirements.txt` and `pyproject.toml` track the
+exact versions used to generate the published results (PyTorch `2.6.0+cu124`,
+Lightning `2.5.6`, etc.).
+
+#### Option A — pip + `requirements.txt` (recommended)
 
 ```commandline
 conda create -n contp python=3.10 -y
 conda activate contp
-pip install torch==2.4.0 --index-url https://download.pytorch.org/whl/cu121
-pip install torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
-pip install ipywidgets jupyterlab tqdm numpy pandas lightning omegaconf biopython fair-esm scikit-learn h5py aaindex tensorboard
+
+# Install the CUDA 12.4 PyTorch wheels first (they live on a separate index).
+pip install --index-url https://download.pytorch.org/whl/cu124 \
+    torch==2.6.0+cu124 torchvision==0.21.0+cu124 torchaudio==2.6.0+cu124
+
+# Then install the remaining pinned dependencies.
+pip install -r requirements.txt
 ```
+
+If your host has a different CUDA toolchain, replace the `+cu124` wheels
+with the matching CUDA build for `torch==2.6.0` from
+[pytorch.org](https://pytorch.org/get-started/previous-versions/) — the
+rest of the pinned versions stay the same.
+
+#### Option B — `pip install -e .` via `pyproject.toml`
+
+```commandline
+conda create -n contp python=3.10 -y
+conda activate contp
+
+pip install --index-url https://download.pytorch.org/whl/cu124 \
+    torch==2.6.0+cu124 torchvision==0.21.0+cu124 torchaudio==2.6.0+cu124
+pip install -e .
+```
+
+The `pyproject.toml` also declares `pytorch-cu124` as a custom PyPI index
+under `[tool.uv.sources]` / `[[tool.pdm.source]]`, so [`uv`](https://docs.astral.sh/uv/)
+or [PDM](https://pdm-project.org/) users can resolve the full environment
+with a single `uv sync` / `pdm install` invocation.
 
 ## Inference
 

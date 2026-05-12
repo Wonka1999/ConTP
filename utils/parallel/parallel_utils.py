@@ -10,9 +10,9 @@ def concurrent_submit(parallel_func, params, cpu_num=mp.cpu_count(), desc=None, 
     pbar.set_description(desc)
 
     if threading:
-        executor = concurrent.futures.ThreadPoolExecutor(max_workers=cpu_num)  # 适合I/O密集型任务
+        executor = concurrent.futures.ThreadPoolExecutor(max_workers=cpu_num)  # suited for I/O-bound tasks
     else:
-        executor = concurrent.futures.ProcessPoolExecutor(max_workers=cpu_num)  # 适合CPU密集型任务
+        executor = concurrent.futures.ProcessPoolExecutor(max_workers=cpu_num)  # suited for CPU-bound tasks
 
     with executor as executor:
         futures = [executor.submit(parallel_func, *param) for param in params]

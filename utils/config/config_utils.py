@@ -10,7 +10,7 @@ from .. import root_path
 
 
 def log_config(config, prefix='config'):
-    # 格式化输出配置参数config (dict/Namespace/omegaconf.dictconfig.DictConfig)
+    # Pretty-print a config object (dict / Namespace / omegaconf.dictconfig.DictConfig)
     if type(config) == dict:
         pass
     elif type(config) == omegaconf.dictconfig.DictConfig:
@@ -20,41 +20,41 @@ def log_config(config, prefix='config'):
     else:
         raise RuntimeError(f'Param args is with illegal type: {config}')
     print(f'[{prefix}]:')
-    print(json.dumps(config, indent=4, ensure_ascii=False))  # 缩进4空格，中文字符不转义成Unicode
+    print(json.dumps(config, indent=4, ensure_ascii=False))  # indent 4 spaces; keep non-ASCII characters as-is
 
 
 def config_to_namespace(config):
-    # 将config从OmegaConf转换为Namespace
+    # Convert config from OmegaConf to Namespace
     return Namespace(**OmegaConf.to_object(config))
 
 
 def namespace_to_config(config):
-    # 将config从Namespace转换为OmegaConf
+    # Convert config from Namespace to OmegaConf
     return OmegaConf.create(vars(config))
 
 
 def config_to_dict(config):
-    # 将config从OmegaConf转换为dict
+    # Convert config from OmegaConf to dict
     return OmegaConf.to_object(config)
 
 
 def dict_to_config(config_dict):
-    # 将config从dict转换为OmegaConf
+    # Convert config from dict to OmegaConf
     return OmegaConf.create(config_dict)
 
 
 def load_config(path):
-    # 从checkpoints的hparams文件中加载保存好的参数设置
+    # Load saved parameters from a Lightning checkpoint's hparams file
     config = OmegaConf.load(path)
-    try:  # lightning保存的参数设置默认是在args字段中
+    try:  # Lightning saves parameters under the "config" field by default
         config = config.config
-    except:  # 读取的是一般的yaml文件，没有args字段
+    except:  # plain yaml file without the "config" field
         pass
     return config
 
 
 def merge_config(config, *args):
-    # 更新config, 统一处理dict类型，yaml文件路径和命令行参数
+    # Update config; uniformly handle dict, yaml file paths, and command-line arguments
     for x in args:
         if type(x) == dict:
             # dict: key-value pairs
@@ -73,8 +73,9 @@ def merge_config(config, *args):
 
 def parse_config(*args):
     '''
-    加载配置，包括项目设置和模型超参数。考虑从yaml文件中读取，从自定义参数字典中读取，以及从命令行参数中读取。
-    :param *args: 更新的参数设置
+    Load configuration, including project settings and model hyper-parameters.
+    Supports reading from yaml files, custom parameter dicts, and command-line arguments.
+    :param *args: parameter overrides
     :return: args: OmegaConf (omegaconf.dictconfig.DictConfig)
     '''
     cmd_args = os.sys.argv[1:]

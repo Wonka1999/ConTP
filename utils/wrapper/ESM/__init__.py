@@ -63,7 +63,7 @@ class ESMWrapper:
             output_dir=None,
             model_name='esm2_t33_650M_UR50D',
             repr_layers='33',
-            include='per_tok, mean',
+            include='per_tok,mean',
             nogpu=False,
             device=None,
             **kwargs
@@ -152,7 +152,7 @@ class ESMWrapper:
         load_seqs = result_df['sequence'].values if sequences is None else sequences
         pt_files = result_df.set_index('sequence').loc[load_seqs]['pt_file']  # keep the order of load_seqs unchanged
 
-        if parallel:  # 不一定比串行快
+        if parallel:  # not guaranteed to be faster than sequential loading
             bsz = kwargs.get('batch_size', 5)
             params = [(list(range(i, i + bsz)), pt_files[i: i + bsz]) for i in range(0, len(pt_files), bsz)]
             results = concurrent_submit(parallel_load_tensor, params, desc='Loading ESM data')
@@ -166,7 +166,7 @@ class ESMWrapper:
         features = []
         for seq, data in zip(load_seqs, results):
             if key == 'representations':
-                feature = data[key][layer]  # 已经是cpu tensor并且已经去掉了cls, eos, padding
+                feature = data[key][layer]  # already a CPU tensor with cls/eos/padding stripped
             elif key == 'mean_representations':
                 feature = data[key][layer]
             elif key == 'contacts':

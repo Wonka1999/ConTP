@@ -1,0 +1,103 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "contp"
+version = "0.1.0"
+description = "ConTP: Transporter Function Prediction via Contrastive Learning"
+readme = "README.md"
+requires-python = ">=3.10,<3.11"
+license = { text = "MIT" }
+authors = [
+    { name = "Wenjia He",     email = "wenjia.he@kaust.edu.sa" },
+    { name = "Chenjie Feng",  email = "chenjie.feng@kaust.edu.sa" },
+]
+maintainers = [
+    { name = "Wenjia He", email = "wenjia.he@kaust.edu.sa" },
+]
+keywords = [
+    "transporter",
+    "contrastive-learning",
+    "protein",
+    "ESM",
+    "bioinformatics",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+# Pinned to match the working conda env (Python 3.10, CUDA 12.4).
+# The torch / torchvision / torchaudio CUDA wheels must be installed from
+# https://download.pytorch.org/whl/cu124 — see the install instructions in
+# README.md and the matching pins in requirements.txt.
+dependencies = [
+    # Deep learning core
+    "torch==2.6.0+cu124",
+    "torchvision==0.21.0+cu124",
+    "torchaudio==2.6.0+cu124",
+    "lightning==2.5.6",
+    "pytorch-lightning==2.5.6",
+    "torchmetrics==1.8.2",
+    "lightning-utilities==0.15.2",
+    # Scientific stack
+    "numpy==2.2.5",
+    "pandas==2.3.3",
+    "scipy==1.15.3",
+    "scikit-learn==1.7.2",
+    "h5py==3.15.1",
+    # Protein / bio-informatics
+    "biopython==1.86",
+    "fair-esm==2.0.0",
+    "aaindex==1.1.2",
+    # Config & utilities
+    "omegaconf==2.3.0",
+    "PyYAML==6.0.3",
+    "tqdm==4.67.1",
+    # Logging & experiment tracking
+    "tensorboard==2.20.0",
+    # Notebook tooling (required by the bundled .ipynb scripts)
+    "jupyterlab==4.4.7",
+    "ipywidgets==8.1.7",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.6",
+    "black>=24.0",
+    "isort>=5.13",
+]
+
+[project.urls]
+Homepage      = "https://github.com/Hill-Wenka/ConTP"
+Repository    = "https://github.com/Hill-Wenka/ConTP"
+"Bug Tracker" = "https://github.com/Hill-Wenka/ConTP/issues"
+
+# Custom PyPI mirror for the cu124 PyTorch wheels. Tools that honour this
+# table (PDM, uv, Hatch) will pull torch/torchvision/torchaudio from the
+# PyTorch download index automatically.
+[[tool.pdm.source]]
+name = "pytorch-cu124"
+url = "https://download.pytorch.org/whl/cu124"
+verify_ssl = true
+
+[[tool.uv.index]]
+name = "pytorch-cu124"
+url = "https://download.pytorch.org/whl/cu124"
+explicit = true
+
+[tool.uv.sources]
+torch       = { index = "pytorch-cu124" }
+torchvision = { index = "pytorch-cu124" }
+torchaudio  = { index = "pytorch-cu124" }
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["model*", "utils*"]
+exclude = ["dataset*", "dataset_bak*", "temp*", "ckpt*", "data*", "generation*", "script*"]
